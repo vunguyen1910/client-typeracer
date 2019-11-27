@@ -16,7 +16,7 @@ class App extends React.Component {
       wpm: 0,
       index: 0,
       value: "",
-      token: "",
+      token: "22",
       error: false,
       errorCount: 0,
       timeElapsed: 0,
@@ -29,9 +29,14 @@ class App extends React.Component {
 
   async componentDidMount() {
     this.intervals = [];
-    this.setupCurrentUser();
+    this.getExcerpts();
+    // this.setupCurrentUser();
   }
-
+  getExcerpts = async () => {
+    const excerpts = await fetch("https://127.0.0.1:5000/excerpts");
+    const data = await excerpts.json();
+    console.log(data)
+  };
   setupCurrentUser = () => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
@@ -161,7 +166,7 @@ class App extends React.Component {
     let wpm;
     if (this.state.completed) {
       wpm = (this.state.excerpt.split(" ").length / (elapsed / 1000)) * 60;
-      // this.postScore(wpm, elapsed);
+      this.postScore(wpm, elapsed);
     } else {
       let words = this.state.excerpt.slice(0, this.state.index).split(" ")
         .length;
@@ -200,7 +205,7 @@ class App extends React.Component {
 
   renderSignin = () => {
     return (
-      <div classname="signin">
+      <div className="signin">
           <h1>Please Sign In</h1>
           <input 
             autoFocus
@@ -219,13 +224,13 @@ class App extends React.Component {
           <h1>Type Racing</h1>
           <i onClick={this._restartGame} className="fa fa-lg fa-refresh"></i>
           <i className="fa fa-lg fa-bars" onClick={this._changeView}></i>
-          {this.state.token && this.state.token.length > 3 ? (
+          {this.state.token && this.state.token.length > 1 ? (
             <div>Sign Out</div>
           ) : (
             <div> Sign In</div>
           )}
         </div>
-        {this.state.token && this.state.token.length > 3 ? this.renderGame() : this.renderSignin()} 
+        {this.state.token && this.state.token.length > 1 ? this.renderGame() : this.renderSignin()} 
         <Footer />
       </>
     );
